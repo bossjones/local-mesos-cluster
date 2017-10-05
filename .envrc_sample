@@ -1,0 +1,9 @@
+echo "DOCKER_HOST = "${DOCKER_HOST}";
+echo "DOCKER_IP = "${DOCKER_IP}";
+
+if [ -z "${DOCKER_HOST}" ]; then
+    echo "DOCKER_HOST is not set. Check your docker-machine is running or do 'eval $(docker-machine env)';
+    exit 1;
+fi;
+
+export DOCKER_IP=$(echo ${DOCKER_HOST:-tcp://127.0.0.1:2376} | cut -d/ -f3 | cut -d: -f1)

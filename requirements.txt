@@ -1,0 +1,15 @@
+fabric==1.14.0
+
+# debugging and tooling
+pep8
+autopep8
+pylint
+ipython
+isort
+wheel
+setuptools
+
+# remote debugging in visual studio code
+# source: https://docs.microsoft.com/en-us/visualstudio/python/debugging-cross-platform-remote
+ptvsd
+prettytable
