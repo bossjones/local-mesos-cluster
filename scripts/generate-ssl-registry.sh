@@ -71,8 +71,9 @@ jq '.HostOptions.EngineOptions.InsecureRegistry[.HostOptions.EngineOptions.Insec
 
 # jq '.HostOptions.EngineOptions.InsecureRegistry as $f | "orange" | IN($f[])' ~/.docker/machine/machines/$DOCKER_MACHINE_NAME/config.json
 
+# FIXME: This has to be broken
 # if this is null, exit
-RET_VALUE=$(jq '.HostOptions.EngineOptions.InsecureRegistry | index( "192.168.99.101.xip.io:5000" )' ~/.docker/machine/machines/$DOCKER_MACHINE_NAME/config.json)
+RET_VALUE=$(jq '.HostOptions.EngineOptions.InsecureRegistry | index( "192.168.99.101.xip.io:5000" )' ~/.docker/machine/machines/$DOCKER_MACHINE_NAME/config-${_TEMP_CONFIG_FILE}.json)
 
 if [[ "${RET_VALUE}" = "null" ]]; then
   # FIXME: Use bash variables for these
