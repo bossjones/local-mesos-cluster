@@ -57,8 +57,8 @@ docker-machine scp ${_DIR}/../${SSL_DIR}/domain.crt $DOCKER_MACHINE_NAME:.
 
 
 docker-machine ssh $DOCKER_MACHINE_NAME sudo mkdir -p /etc/docker/certs.d/${FLOATING_IP}.xip.io:5000
-docker-machine ssh $DOCKER_MACHINE_NAME sudo mv -v /home/docker/domain.* /etc/docker/certs.d/${FLOATING_IP}.xip.io:5000/
-
+docker-machine ssh $DOCKER_MACHINE_NAME sudo cp -frv /home/docker/domain.* /etc/docker/certs.d/${FLOATING_IP}.xip.io:5000/
+docker-machine ssh $DOCKER_MACHINE_NAME sudo chmod 400 /etc/docker/certs.d/${FLOATING_IP}.xip.io:5000/domain.crt
 # FIXME: these vars need to be fixed for sure
 
 _TEMP_CONFIG_FILE=$(uuidgen)
@@ -86,3 +86,58 @@ else
   mv -fv ~/.docker/machine/machines/$DOCKER_MACHINE_NAME/config-${_TEMP_CONFIG_FILE}.json ~/.docker/machine/machines/$DOCKER_MACHINE_NAME/config.json
 fi
 
+
+# update insecure registry
+# root@local-mesos-cluster:/mnt/sda1/var/lib/boot2docker# cat /var/lib/boot2docker/profile
+
+# EXTRA_ARGS='
+# --label provider=virtualbox
+
+# '
+# CACERT=/var/lib/boot2docker/ca.pem
+# DOCKER_HOST='-H tcp://0.0.0.0:2376'
+# DOCKER_STORAGE=aufs
+# DOCKER_TLS=auto
+# SERVERKEY=/var/lib/boot2docker/server-key.pem
+# SERVERCERT=/var/lib/boot2docker/server.pem
+
+# FIXME, have this add shit to /var/lib/boot2docker/profile
+docker-machine ssh $DOCKER_MACHINE_NAME echo "\\\"EXTRA_ARGS=\"\\\$EXTRA_ARGS --insecure-registry https://${FLOATING_IP}.xip.io:5000\"\\\""
+
+# ± |feature-init U:1 ✗| → docker-machine ssh $DOCKER_MACHINE_NAME echo "\\\"EXTRA_ARGS=\"\\\$EXTRA_ARGS --insecure-registry https://${FLOATING_IP}.xip.io:5000\"\\\""
+# "EXTRA_ARGS=$EXTRA_ARGS --insecure-registry https://192.168.99.101.xip.io:5000"
+
+# Put it on docker-machine server again
+# SOURCE: https://github.com/boot2docker/boot2docker/issues/347#issuecomment-187552378
+docker-machine scp ${_DIR}/../${SSL_DIR}/domain.key $DOCKER_MACHINE_NAME:.
+docker-machine scp ${_DIR}/../${SSL_DIR}/domain.crt $DOCKER_MACHINE_NAME:.
+docker-machine ssh $DOCKER_MACHINE_NAME sudo cp /home/docker/domain.crt /usr/local/share/ca-certificates/
+docker-machine ssh $DOCKER_MACHINE_NAME sudo chmod 400 /usr/local/share/ca-certificates/domain.crt
+docker-machine ssh $DOCKER_MACHINE_NAME sudo cat /usr/local/share/ca-certificates/domain.crt | grep 'BEGIN.* CERTIFICATE' | wc -l
+
+docker-machine ssh $DOCKER_MACHINE_NAME sudo openssl x509 -noout -fingerprint -in /usr/local/share/ca-certificates/domain.crt
+
+docker-machine ssh $DOCKER_MACHINE_NAME sudo ln -s /usr/local/share/ca-certificates/domain.crt /etc/ssl/certs/domain.pem
+
+docker-machine ssh $DOCKER_MACHINE_NAME sudo cd /etc/ssl/certs && sudo ln -s /etc/ssl/certs/domain.pem `openssl x509 -noout -hash -in /usr/local/share/ca-certificates/domain.crt`.0
+
+docker-machine ssh $DOCKER_MACHINE_NAME sudo cat /usr/local/share/ca-certificates/domain.crt >> /etc/ssl/certs/ca-certificates.crt
+
+# sudo -i -u root
+# cat /usr/local/share/ca-certificates/<your_crt_file> >> /etc/ssl/certs/ca-certificates.crt
+# exit
+
+
+# FROM boot2docker/boot2docker
+
+# RUN mkdir -p $ROOTFS/usr/local/share/ca-certificates/foo.com
+# COPY foo.crt $ROOTFS/usr/local/share/ca-certificates/foo.com
+# RUN mkdir -p $ROOTFS/usr/local/etc/ssl/certs && \
+#   cd $ROOTFS/usr/local/etc/ssl/certs && \
+#   ln -s /usr/local/share/ca-certificates/foo.com/foo.crt foo.crt && \
+#   export hash=`openssl x509 -hash -in $ROOTFS/usr/local/share/ca-certificates/foo.com/foo.crt | head -n1` && \
+#   ln -s foo.crt $hash.0 && \
+#   echo "cat /usr/local/share/ca-certificates/foo.com/foo.crt >> /usr/local/etc/ssl/certs/ca-certificates.crt" >> $ROOTFS/etc/init.d/rcS
+
+# RUN /make_iso.sh
+# CMD ["cat", "boot2docker.iso"]

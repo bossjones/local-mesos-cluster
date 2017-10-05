@@ -2,10 +2,10 @@ export DOCKER_IP = $(shell which docker-machine > /dev/null 2>&1 && docker-machi
 
 # verify that certain variables have been defined off the bat
 check_defined = \
-    $(foreach 1,$1,$(__check_defined))
+	$(foreach 1,$1,$(__check_defined))
 __check_defined = \
-    $(if $(value $1),, \
-      $(error Undefined $1$(if $(value 2), ($(strip $2)))))
+	$(if $(value $1),, \
+	  $(error Undefined $1$(if $(value 2), ($(strip $2)))))
 
 list_allowed_args := product ip command
 
@@ -92,3 +92,11 @@ upgrade-pip-base-packages:
 
 list:
 	@$(MAKE) -qp | awk -F':' '/^[a-zA-Z0-9][^$#\/\t=]*:([^=]|$$)/ {split($$1,A,/ /);for(i in A)print A[i]}' | sort
+
+registry-start:
+	docker run -d -p 5000:5000 --restart=always --name registry \
+	-v `pwd`/certs:/certs \
+	-v `pwd`/data:/var/lib/registry \
+	-e "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt" \
+	-e "REGISTRY_HTTP_TLS_KEY=/certs/domain.key" \
+	registry:2
