@@ -103,6 +103,10 @@ registry-start:
 
 scp-ssl-registry-script-to-docker-machine:
 	docker-machine scp ./scripts/generate-ssl-registry-run-on-docker-machine.sh local-mesos-cluster:.
+	@echo "Now pull down the certs into ./certs"
+	# FIXME: Maybe have this call make itself, so no code duplication required
+	docker-machine scp local-mesos-cluster:certs/domain.crt ./certs/domain.crt
+	docker-machine scp local-mesos-cluster:certs/domain.key ./certs/domain.key
 
 scp-certs-to-host:
 	docker-machine scp local-mesos-cluster:certs/domain.crt ./certs/domain.crt
