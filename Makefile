@@ -131,3 +131,6 @@ generate-docker-network-name:
 dcos-config-set:
 	dcos config set core.mesos_master_url http://$$(docker-machine ip local-mesos-cluster):5050
 	dcos config set marathon.url http://$$(docker-machine ip local-mesos-cluster):8080
+
+mesosctl:
+	docker run --net=host -it mesoshq/mesosctl mesosctl
