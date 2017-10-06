@@ -122,3 +122,8 @@ scp-ssl-registry-script-to-docker-machine:
 scp-certs-to-host:
 	docker-machine scp local-mesos-cluster:certs/domain.crt ./certs/domain.crt
 	docker-machine scp local-mesos-cluster:certs/domain.key ./certs/domain.key
+
+# eg. localmesoscluster
+# This can be used to generate network name, like localmesoscluster_default
+generate-docker-network-name:
+	python -c "import re;name='$(basename $(pwd))';print re.sub(r'[^a-z0-9]', '', name.lower())"
