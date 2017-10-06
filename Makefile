@@ -129,5 +129,5 @@ generate-docker-network-name:
 	python -c "import re;name='$(basename $(pwd))';print re.sub(r'[^a-z0-9]', '', name.lower())"
 
 dcos-config-set:
-	dcos config set core.mesos_master_url $$(docker-machine ip local-mesos-cluster):5050
-	dcos config set marathon.url $$(docker-machine ip local-mesos-cluster):8080
+	dcos config set core.mesos_master_url http://$$(docker-machine ip local-mesos-cluster):5050
+	dcos config set marathon.url http://$$(docker-machine ip local-mesos-cluster):8080
