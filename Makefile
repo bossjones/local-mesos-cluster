@@ -59,6 +59,9 @@ db-conn:
 				--user=root --password=password \
 				db'
 
+docker-clean:
+	@docker rm -v $$(docker ps --no-trunc -a -q); docker rmi $$(docker images -q --filter "dangling=true")
+
 phpmyadmin:
 	docker-compose up -d phpmyadmin
 	sleep 1
@@ -95,11 +98,19 @@ list:
 
 registry-start:
 	docker run -d -p 5000:5000 --restart=always --name registry \
+	--rm \
 	-v `pwd`/certs:/certs \
 	-v `pwd`/data:/var/lib/registry \
 	-e "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt" \
 	-e "REGISTRY_HTTP_TLS_KEY=/certs/domain.key" \
 	registry:2
+
+registry-stop:
+	docker kill registry
+	echo "--------"
+	docker ps
+	echo "--------"
+	@$(MAKE) docker-clean
 
 scp-ssl-registry-script-to-docker-machine:
 	docker-machine scp ./scripts/generate-ssl-registry-run-on-docker-machine.sh local-mesos-cluster:.

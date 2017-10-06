@@ -36,7 +36,7 @@ services:
       MESOS_CONTAINERIZERS: docker,mesos
       MESOS_PORT: 5051
       MESOS_RESOURCES: ports(*):[11000-11999]
-      MESOS_ATTRIBUTES: ethos_role:worker
+      MESOS_ATTRIBUTES: lab_role:worker
       MESOS_HOSTNAME: slave1.${DOCKER_IP}.xip.io
       LIBPROCESS_IP: ${DOCKER_IP}
       MESOS_WORK_DIR: /tmp/mesos
@@ -57,7 +57,7 @@ services:
       MESOS_CONTAINERIZERS: docker,mesos
       MESOS_PORT: 5052
       MESOS_RESOURCES: ports(*):[12000-12999]
-      MESOS_ATTRIBUTES: ethos_role:worker
+      MESOS_ATTRIBUTES: lab_role:worker
       MESOS_HOSTNAME: slave2.${DOCKER_IP}.xip.io
       LIBPROCESS_IP: ${DOCKER_IP}
       MESOS_WORK_DIR: /tmp/mesos
@@ -78,7 +78,7 @@ services:
       MESOS_CONTAINERIZERS: docker,mesos
       MESOS_PORT: 5053
       MESOS_RESOURCES: ports(*):[8000-10999]
-      MESOS_ATTRIBUTES: ethos_role:control
+      MESOS_ATTRIBUTES: lab_role:control
       MESOS_HOSTNAME: slave3.${DOCKER_IP}.xip.io
       LIBPROCESS_IP: ${DOCKER_IP}
       MESOS_WORK_DIR: /tmp/mesos
