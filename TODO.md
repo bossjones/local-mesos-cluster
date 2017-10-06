@@ -272,3 +272,9 @@ e1857ee1f3b5: Image successfully pushed
 
 Hopefully this information will be helpful to others and save them many web search hours.
 ```
+
+# finish adding dcos-cli
+
+*source: https://stackoverflow.com/questions/39970133/does-dcos-cli-work-with-plain-mesos*
+
+eg. `dcos config set core.mesos_master_url 52.34.160.132:5050`
