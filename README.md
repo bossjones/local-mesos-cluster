@@ -7,54 +7,18 @@ Quick setup to allow anyone to bring up a local mesos/marathon environment using
 `~/.local-mesos-cluster/config.json`
 
 ```
-  "github": {
-        "auth": {
-            "token": "your_oauth_token"
-        },
-        "orgs": [
-            "behanceops"
-        ]
-    },
-    "jenkins": {
+  "local-mesos-cluster": {
+    "docker-machines": {
         "instances": {
-            "bejankins": {
-                "jenkins": {
-                    "url": "http://bejankins.net:8080",
-                    "user": "behance-qe",
-                    "password": "password"
-                },
-                "job_builder": {
-                    "ignore_cache": "true"
+            "local-mesos-cluster": {
+                "docker": {
+                    "tls_verify": "1",
+                    "host": "tcp://192.168.99.101:2376",
+                    "cert_path": "/Users/user/.docker/machine/machines/local-mesos-cluster",
+                    "machine_name": "local-mesos-cluster"
                 }
             }
-        },
-        "template_params": {
-            "bejankins": {
-                "gitauth": "aaaaaaaa-0000-aaaa-0000-aaaaaaaaaaaa",
-                "ghprauth": "00000000-aaaa-0000-aaaa-000000000000"
-            }
-        },
-        "jobs": [
-            {
-                "instance": "ci-jenkins",
-                "owner": "behanceops",
-                "repo": "bephp",
-                "templates": [
-                    "{repo}-integrations"
-                ]
-            },
-            {
-                "instance": "bejankins",
-                "owner": "behanceops",
-                "templates": [
-                    "branch-cookbook-{repo}",
-                    "master-cookbook-{repo}"
-                ],
-                "exclude": [
-                    "misc"
-                ]
-            }
-        ]
+        }
     }
 }
 ```
