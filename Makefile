@@ -100,3 +100,10 @@ registry-start:
 	-e "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/domain.crt" \
 	-e "REGISTRY_HTTP_TLS_KEY=/certs/domain.key" \
 	registry:2
+
+scp-ssl-registry-script-to-docker-machine:
+	docker-machine scp ./scripts/generate-ssl-registry-run-on-docker-machine.sh local-mesos-cluster:.
+
+scp-certs-to-host:
+	docker-machine scp local-mesos-cluster:certs/domain.crt ./certs/domain.crt
+	docker-machine scp local-mesos-cluster:certs/domain.key ./certs/domain.key
