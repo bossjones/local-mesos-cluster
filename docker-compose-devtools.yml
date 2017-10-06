@@ -1,0 +1,26 @@
+version: "2"
+
+services:
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    links:
+      - mysql-db:db
+    ports:
+      - "3380:80"
+
+  etcdctl-web:
+    image: cjbottaro/etcdctl-web:latest
+    environment:
+      ETCD_HOST: etcd:2379
+    command: rails s -b 0.0.0.0
+    links:
+      - etcd
+    ports:
+      - "3000:3000"
+
+  zk-web:
+    image: tobilg/zookeeper-webui
+    network_mode: host
+    environment:
+      ZK_DEFAULT_NODE: ${DOCKER_IP}:2181/
+      HTTP_PORT: 2280
