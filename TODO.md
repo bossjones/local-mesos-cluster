@@ -272,3 +272,48 @@ e1857ee1f3b5: Image successfully pushed
 
 Hopefully this information will be helpful to others and save them many web search hours.
 ```
+
+# finish adding dcos-cli
+
+*source: https://stackoverflow.com/questions/39970133/does-dcos-cli-work-with-plain-mesos*
+
+eg. `dcos config set core.mesos_master_url 52.34.160.132:5050`
+
+eg. `dcos config set core.mesos_master_url $(docker-machine ip local-mesos-cluster):5050`
+
+
+# Pass more mesos options? ( example )
+
+```
+ExecStart=/usr/bin/bash -c "source /etc/profile.d/etcdctl.sh && \
+  sudo -E docker run \
+    --name=agent-mesos \
+    --net=host \
+    --pid=host \
+    --privileged \
+    -p 5051:5051 \
+    -v /home/core/.dockercfg:/root/.dockercfg:ro \
+    -v /sys:/sys \
+    -v /usr/bin/docker:/usr/bin/docker:ro \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v /lib64/libdevmapper.so:/lib/libdevmapper.so.1.02:ro \
+    -v /lib64/libsystemd.so:/lib/libsystemd.so.0:ro \
+    -v /lib64/libgcrypt.so:/lib/libgcrypt.so.20:ro \
+    -v /lib64/libgpg-error.so.0:/lib/x86_64-linux-gnu/libgpg-error.so.0:ro \
+    -v /lib64/libseccomp.so.2:/lib/x86_64-linux-gnu/libseccomp.so.2:ro \
+    -v /var/lib/mesos/slave:/var/lib/mesos/slave \
+    -v /opt/mesos/credentials:/opt/mesos/credentials:ro \
+    $($IMAGE) \
+    --ip=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4) \
+    --attributes=zone:$(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone)\;os:coreos\;worker_group:$WORKER_GROUP \
+    --containerizers=docker,mesos \
+    --executor_registration_timeout=10mins \
+    --hostname=$(curl -s http://169.254.169.254/latest/meta-data/local-hostname) \
+    --log_dir=/var/log/mesos \
+    --credential=/opt/mesos/credentials \
+    --master=zk://$($ZK_USERNAME):$($ZK_PASSWORD)@$($ZK_ENDPOINT)/mesos \
+    --work_dir=/var/lib/mesos/slave \
+    --cgroups_enable_cfs"
+```
+
+# Pyspark Notebook: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook
