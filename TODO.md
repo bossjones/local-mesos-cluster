@@ -315,3 +315,5 @@ ExecStart=/usr/bin/bash -c "source /etc/profile.d/etcdctl.sh && \
     --work_dir=/var/lib/mesos/slave \
     --cgroups_enable_cfs"
 ```
+
+# Pyspark Notebook: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook

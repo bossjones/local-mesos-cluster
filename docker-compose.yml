@@ -27,6 +27,7 @@ services:
       - zk
     restart: always
 
+  # Tips on configuring mesos: https://mesos.apache.org/documentation/latest/configuration/
   slave-one:
     image: mesosphere/mesos-slave:1.2.0-rc2
     network_mode: host
