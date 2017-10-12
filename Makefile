@@ -21,6 +21,12 @@ export NC
 export ORNG
 export BLUE
 
+# .DEFAULT_GOAL:=list
+
+DOCKER_COMPOSE:=docker-compose -f docker-compose.yml
+DOCKER_COMPOSE_NOTEBOOK:=docker-compose -f docker-compose.yml -f docker-compose-spark.yml
+DOCKER:=docker
+
 check-docker-env-vars:
 	@echo "DOCKER_HOST = \"$$DOCKER_HOST\""; \
 	echo "DOCKER_IP = \"$$DOCKER_IP\""; \
@@ -38,11 +44,22 @@ check-docker-env-vars:
 	fi
 
 dev-up: check-docker-env-vars
-	docker-compose up -d
+	$(DOCKER_COMPOSE) up -d
 
 dev-down: check-docker-env-vars
-	docker-compose stop
-	docker-compose rm -f
+	$(DOCKER_COMPOSE) stop
+	$(DOCKER_COMPOSE) rm -f
+
+dev-up-with-jupyter: check-docker-env-vars
+	$(DOCKER_COMPOSE_NOTEBOOK) up -d
+	$(DOCKER) inspect localmesoscluster_pyspark_1 | jq
+	$(DOCKER) inspect localmesoscluster_slave-one_1 | jq
+	$(DOCKER) inspect localmesoscluster_slave-two_1 | jq
+	$(DOCKER) inspect localmesoscluster_slave-three_1 | jq
+
+dev-down-with-jupyter: check-docker-env-vars
+	$(DOCKER_COMPOSE_NOTEBOOK) stop
+	$(DOCKER_COMPOSE_NOTEBOOK) rm -f
 
 db-conn:
 	mkdir -p var/mysql-container-home
@@ -78,7 +95,12 @@ open-mesos:
 
 open: open-marathon open-mesos
 
-open-mesos: open-marathon open-mesos
+open-mesos-marathon: open-marathon open-mesos
+
+open-jupyter:
+	open http://$$(docker-machine ip local-mesos-cluster):8888
+
+open-all: open-mesos-marathon open-jupyter
 
 bootstrap-docker-machine:
 	docker-machine create -d virtualbox \
@@ -134,3 +156,29 @@ dcos-config-set:
 
 mesosctl:
 	docker run --net=host -it mesoshq/mesosctl mesosctl
+
+multitail-usage:
+	@echo '[run] multitail has an in-built interactive help that you should be able to learn a lot from. h is your friend. I won’t mention all the shorcuts here, but here’s a list of quick one that I use fairly often.'
+	@echo '[run] h for interactive help'
+	@echo '[run] q to get back one step / quit'
+	@echo '[run] U to get back to default view'
+	@echo '[run] u to exclusively view a log'
+	@echo '[run] z to hide a log'
+	@echo '[run] b to scrollback a log'
+	@echo '[run] B to scrollback the interspered log'
+
+# source: http://suva.sh/posts/using-multitail-with-docker-compose-to-group-interspersed-logs
+multitail-agents:
+	multitail -o beep_method:popup                           \
+	          -cT ansi -l '$(DOCKER_COMPOSE) logs -f slave-one'     \
+	          -cT ansi -l '$(DOCKER_COMPOSE) logs -f slave-two'  \
+	          -cT ansi -l '$(DOCKER_COMPOSE) logs -f slave-three'
+
+multitail-zk-etcd:
+	multitail -o beep_method:popup                           \
+	          -cT ansi -l '$(DOCKER_COMPOSE) logs -f zk'     \
+	          -cT ansi -l '$(DOCKER_COMPOSE) logs -f etcd'
+
+logs:
+	$(if $(SERVICE_NAME), $(info -- Tailing logs for $(SERVICE_NAME)), $(info -- Tailing all logs, SERVICE_NAME not set.))
+	$(DOCKER_COMPOSE) logs -f $(SERVICE_NAME)
