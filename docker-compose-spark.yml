@@ -1,4 +1,7 @@
-# NOTE: Run this w/ docker-compose -f
+---
+version: "2"
+
+services:
   pyspark:
     image: jupyter/pyspark-notebook
     network_mode: host
@@ -15,3 +18,24 @@
       TINI_SUBREAPER: 'true'
     stdin_open: true
     tty: true
+    command: "start-notebook.sh --NotebookApp.token=''"
+    restart: always
+
+  # Tips on configuring mesos: https://mesos.apache.org/documentation/latest/configuration/
+  slave-one:
+    environment:
+      # NOTE: Uncomment this if you'r eusing the jupyter notebock for pyspark ( source: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook )
+      # NOTE: "Configure each slave with the --no-switch_user flag or create the jovyan user on every slave node."
+      MESOS_SWITCH_USER: 1
+
+  slave-two:
+    environment:
+      # NOTE: Uncomment this if you'r eusing the jupyter notebock for pyspark ( source: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook )
+      # NOTE: "Configure each slave with the --no-switch_user flag or create the jovyan user on every slave node."
+      MESOS_SWITCH_USER: 1
+
+  slave-three:
+    environment:
+      # NOTE: Uncomment this if you'r eusing the jupyter notebock for pyspark ( source: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook )
+      # NOTE: "Configure each slave with the --no-switch_user flag or create the jovyan user on every slave node."
+      MESOS_SWITCH_USER: 1
