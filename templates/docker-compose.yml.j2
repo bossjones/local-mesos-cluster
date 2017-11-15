@@ -8,6 +8,11 @@ services:
       ZK_CONFIG: tickTime=2000,initLimit=10,syncLimit=5,maxClientCnxns=128,forceSync=no,clientPort=2181
       ZK_ID: 1
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   master:
     image: mesosphere/mesos-master:1.2.0-rc2
@@ -26,6 +31,11 @@ services:
     depends_on:
       - zk
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   # Tips on configuring mesos: https://mesos.apache.org/documentation/latest/configuration/
   slave-one:
@@ -46,11 +56,16 @@ services:
       MESOS_SWITCH_USER: 0
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - /usr/local/bin/docker:/usr/bin/docker
+      - {{ docker_bin_path }}:/usr/bin/docker
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - zk
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
     # entrypoint: ["mesos-slave", "--launcher=posix", '--resources=cpus(*):8; mem(*):15360;']
 
   slave-two:
@@ -71,11 +86,16 @@ services:
       MESOS_SWITCH_USER: 0
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - /usr/local/bin/docker:/usr/bin/docker
+      - {{ docker_bin_path }}:/usr/bin/docker
       - /var/run/docker.sock:/var/run/docker.sock
     depends_on:
       - zk
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   slave-three:
     image: mesosphere/mesos-slave:1.2.0-rc2
@@ -95,7 +115,7 @@ services:
       MESOS_SWITCH_USER: 0
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup
-      - /usr/local/bin/docker:/usr/bin/docker
+      - {{ docker_bin_path }}:/usr/bin/docker
       - /var/run/docker.sock:/var/run/docker.sock
       # source: https://github.com/kaidix/test-compose/blob/master/docker-compose.yml
       # - ./pysparkFile:/pysparkFile
@@ -103,6 +123,11 @@ services:
     depends_on:
       - zk
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   marathon:
     image: mesosphere/marathon:v1.4.1
@@ -116,6 +141,11 @@ services:
     depends_on:
       - zk
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   etcd:
     image: elcolio/etcd:latest
@@ -126,6 +156,11 @@ services:
       - "4001:4001"
       - "2379:2379"
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   db:
     image: percona:5.6
@@ -138,6 +173,11 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   # source: https://coderwall.com/p/dtwc1q/insecure-and-self-signed-private-docker-registry-with-boot2docker
   registry:
@@ -159,18 +199,28 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - ./certs:/certs
       - ./data:/var/lib/registry
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   chronos:
     image: mesosphere/chronos:chronos-2.5.0-0.1.20160824153434.ubuntu1404-mesos-1.0.0
     command: /usr/bin/chronos run_jar --http_port 4400 --master zk://127.0.0.1:2181/mesos --zk_hosts 127.0.0.1:2181
     network_mode: host
     ports:
-    - '4400:4400'
+      - '4400:4400'
     expose:
       - 4400
     depends_on:
      - zk
     restart: always
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
 
   # cassandra:
   #   image: cassandra:3.3

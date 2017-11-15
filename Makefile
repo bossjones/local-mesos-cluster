@@ -1,5 +1,15 @@
 export DOCKER_IP = $(shell which docker-machine > /dev/null 2>&1 && docker-machine ip $(DOCKER_MACHINE_NAME))
 
+PATH_TO_DOCKER := $(shell which docker)
+YOUR_HOSTNAME := $(shell hostname | cut -d "." -f1 | awk '{print $1}')
+
+export HOST_IP=$(shell curl ipv4.icanhazip.com 2>/dev/null)
+# export DOCKER_IP=$HOST_IP
+# export DOCKER_HOST="tcp://${DOCKER_IP}:2377"
+# export PATH_TO_DOCKER=$(which docker)
+# export YOUR_HOSTNAME=$(hostname | cut -d "." -f1 | awk '{print $1}')
+
+
 # verify that certain variables have been defined off the bat
 check_defined = \
 	$(foreach 1,$1,$(__check_defined))
@@ -49,6 +59,13 @@ dev-up: check-docker-env-vars
 dev-down: check-docker-env-vars
 	$(DOCKER_COMPOSE) stop
 	$(DOCKER_COMPOSE) rm -f
+
+dev-up-host:
+	$(DOCKER_COMPOSE) -f docker-compose-$(YOUR_HOSTNAME).yml up -d
+
+dev-down-host:
+	$(DOCKER_COMPOSE) -f docker-compose-$(YOUR_HOSTNAME).yml stop
+	$(DOCKER_COMPOSE) -f docker-compose-$(YOUR_HOSTNAME).yml rm -f
 
 dev-up-with-jupyter: check-docker-env-vars
 	$(DOCKER_COMPOSE_NOTEBOOK) up -d
@@ -182,3 +199,11 @@ multitail-zk-etcd:
 logs:
 	$(if $(SERVICE_NAME), $(info -- Tailing logs for $(SERVICE_NAME)), $(info -- Tailing all logs, SERVICE_NAME not set.))
 	$(DOCKER_COMPOSE) logs -f $(SERVICE_NAME)
+
+# Generate docker-compose and tests/docker-compose fragment files
+# for each image flavor from a Jinja2 template.
+# render jinja template, docker-compose
+render_dc:
+	jinja2 \
+		-D docker_bin_path='$(PATH_TO_DOCKER)' \
+		templates/docker-compose.yml.j2 > docker-compose-$(YOUR_HOSTNAME).yml
