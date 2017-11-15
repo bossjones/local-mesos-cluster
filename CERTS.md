@@ -22,6 +22,7 @@ sudo chown root:root /etc/pki/ca-trust/source/anchors/${HOST_IP}:5000.crt
 sudo chmod 400 /etc/pki/ca-trust/source/anchors/${HOST_IP}:5000.crt
 sudo ls -lta /etc/pki/ca-trust/source/anchors/
 sudo update-ca-trust
+sudo service docker restart
 
 # test it out
 docker pull kennethreitz/httpbin:latest
