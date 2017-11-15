@@ -13,3 +13,7 @@ setuptools
 # source: https://docs.microsoft.com/en-us/visualstudio/python/debugging-cross-platform-remote
 ptvsd
 prettytable
+
+inja2-cli[yaml]==0.6.0
+jinja2==2.9.5
+pyfiglet

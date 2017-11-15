@@ -1,4 +1,8 @@
+SHELL := $(shell which bash)
+
 export DOCKER_IP = $(shell which docker-machine > /dev/null 2>&1 && docker-machine ip $(DOCKER_MACHINE_NAME))
+
+export PATH := ./bin:./venv/bin:$(PATH)
 
 PATH_TO_DOCKER := $(shell which docker)
 YOUR_HOSTNAME := $(shell hostname | cut -d "." -f1 | awk '{print $1}')
@@ -207,3 +211,20 @@ render_dc:
 	jinja2 \
 		-D docker_bin_path='$(PATH_TO_DOCKER)' \
 		templates/docker-compose.yml.j2 > docker-compose-$(YOUR_HOSTNAME).yml
+
+# The tests are written in Python. Make a virtualenv to handle the dependencies.
+venv: requirements.txt
+	@if [ -z $$PYTHON3 ]; then\
+	    PY3_MINOR_VER=`python3 --version 2>&1 | cut -d " " -f 2 | cut -d "." -f 2`;\
+	    if (( $$PY3_MINOR_VER < 5 )); then\
+		echo "Couldn't find python3 in \$PATH that is >=3.5";\
+		echo "Please install python3.5 or later or explicity define the python3 executable name with \$PYTHON3";\
+	        echo "Exiting here";\
+	        exit 1;\
+	    else\
+		export PYTHON3="python3.$$PY3_MINOR_VER";\
+	    fi;\
+	fi;\
+	test -d venv || virtualenv --python=$$PYTHON3 venv;\
+	pip install -r requirements.txt;\
+	touch venv;\

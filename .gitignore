@@ -97,3 +97,11 @@ certs/xip.io.crt
 certs/xip.io.csr
 certs/xip.io.key
 data
+
+
+# from elasticsearch-docker
+**/.*.swp
+**/.ropeproject
+**/.cache
+*.pyc
+/venv

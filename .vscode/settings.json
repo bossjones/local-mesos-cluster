@@ -68,6 +68,11 @@
     "certs/xip.io.crt": "explorerExcludedFiles",
     "certs/xip.io.csr": "explorerExcludedFiles",
     "certs/xip.io.key": "explorerExcludedFiles",
-    "data": "explorerExcludedFiles"
+    "data": "explorerExcludedFiles",
+    "**/.*.swp": "explorerExcludedFiles",
+    "**/.ropeproject": "explorerExcludedFiles",
+    "**/.cache": "explorerExcludedFiles",
+    "*.pyc": "explorerExcludedFiles",
+    "venv": "explorerExcludedFiles"
   }
 }
