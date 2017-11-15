@@ -210,6 +210,7 @@ logs:
 render_dc:
 	jinja2 \
 		-D docker_bin_path='$(PATH_TO_DOCKER)' \
+		-D host_ip='$(HOST_IP)' \
 		templates/docker-compose.yml.j2 > docker-compose-$(YOUR_HOSTNAME).yml
 
 # The tests are written in Python. Make a virtualenv to handle the dependencies.

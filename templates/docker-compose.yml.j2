@@ -26,8 +26,8 @@ services:
       MESOS_QUORUM: 1
       MESOS_CLUSTER: docker-compose
       MESOS_REGISTRY: replicated_log # default is in_memory for some reason
-      MESOS_HOSTNAME: ${DOCKER_IP}
-      LIBPROCESS_IP: ${DOCKER_IP}
+      MESOS_HOSTNAME: {{ host_ip }}
+      LIBPROCESS_IP: {{ host_ip }}
     depends_on:
       - zk
     restart: always
@@ -48,8 +48,8 @@ services:
       MESOS_PORT: 5051
       MESOS_RESOURCES: ports(*):[11000-11999]
       MESOS_ATTRIBUTES: lab_role:worker
-      MESOS_HOSTNAME: slave1.${DOCKER_IP}.xip.io
-      LIBPROCESS_IP: ${DOCKER_IP}
+      MESOS_HOSTNAME: slave1.{{ host_ip }}.xip.io
+      LIBPROCESS_IP: {{ host_ip }}
       MESOS_WORK_DIR: /tmp/mesos
       # NOTE: Uncomment this if you'r eusing the jupyter notebock for pyspark ( source: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook )
       # NOTE: "Configure each slave with the --no-switch_user flag or create the jovyan user on every slave node."
@@ -78,8 +78,8 @@ services:
       MESOS_PORT: 5052
       MESOS_RESOURCES: ports(*):[12000-12999]
       MESOS_ATTRIBUTES: lab_role:worker
-      MESOS_HOSTNAME: slave2.${DOCKER_IP}.xip.io
-      LIBPROCESS_IP: ${DOCKER_IP}
+      MESOS_HOSTNAME: slave2.{{ host_ip }}.xip.io
+      LIBPROCESS_IP: {{ host_ip }}
       MESOS_WORK_DIR: /tmp/mesos
       # NOTE: Uncomment this if you'r eusing the jupyter notebock for pyspark ( source: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook )
       # NOTE: "Configure each slave with the --no-switch_user flag or create the jovyan user on every slave node."
@@ -107,8 +107,8 @@ services:
       MESOS_PORT: 5053
       MESOS_RESOURCES: ports(*):[8000-10999]
       MESOS_ATTRIBUTES: lab_role:control
-      MESOS_HOSTNAME: slave3.${DOCKER_IP}.xip.io
-      LIBPROCESS_IP: ${DOCKER_IP}
+      MESOS_HOSTNAME: slave3.{{ host_ip }}.xip.io
+      LIBPROCESS_IP: {{ host_ip }}
       MESOS_WORK_DIR: /tmp/mesos
       # NOTE: Uncomment this if you'r eusing the jupyter notebock for pyspark ( source: https://github.com/jupyter/docker-stacks/tree/master/pyspark-notebook )
       # NOTE: "Configure each slave with the --no-switch_user flag or create the jovyan user on every slave node."
