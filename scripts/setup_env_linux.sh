@@ -16,3 +16,7 @@ echo "DOCKER_HOST: ${DOCKER_HOST}"
 echo "PATH_TO_DOCKER: ${PATH_TO_DOCKER}"
 echo "YOUR_HOSTNAME: ${YOUR_HOSTNAME}"
 echo "******************************************"
+
+# unset HOST_IP
+# unset DOCKER_IP
+# unset DOCKER_HOST
