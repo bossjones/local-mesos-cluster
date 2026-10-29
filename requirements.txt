@@ -15,5 +15,5 @@ ptvsd
 prettytable
 
 jinja2-cli[yaml]==0.6.0
-jinja2==2.9.5
+jinja2==3.1.6
 pyfiglet
